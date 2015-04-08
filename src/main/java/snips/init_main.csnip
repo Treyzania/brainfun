@@ -1,0 +1,22 @@
+int main(void) {
+	
+	// Do the init assignments.
+	
+	// Allocate registers.
+	a = malloc(sizeof(unsigned char));
+	b = malloc(sizeof(unsigned char));
+	c = malloc(sizeof(unsigned char));
+	d = malloc(sizeof(unsigned char));
+	
+	// Allocate the stack and data body.
+	stack = malloc(sizeof(unsigned char) * STACKSIZE);
+	data = malloc(sizeof(unsigned char) * DATASIZE);
+	
+	// Allocate and assign stack and data pointers.
+	sp = malloc(sizeof(unsigned char*));
+	sp = stack;
+	dp = malloc(sizeof(unsigned char*));
+	dp = data;
+	
+	// All done the inits.  Now we actually run the program...
+	
