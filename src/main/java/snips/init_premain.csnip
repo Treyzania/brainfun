@@ -23,10 +23,6 @@ unsigned char* b;
 unsigned char* c;
 unsigned char* d;
 
-FILE* i;
-FILE* j;
-FILE* k;
-
 unsigned char* stack;
 unsigned char* data;
 unsigned char* sp; // Stack pointer.
