@@ -7,7 +7,7 @@ ABSTRACT:
 
 Brainfun is an improvement on the original brainf*** that
 allows for more functionality while still maintaining the
-crypitc feel of the original language. These revisions are
+cryptic feel of the original language. These revisions are
 not intended to allow the language to become more mainstream
 or easy to use, but to allow more functionality in a way that
 may make the language even more difficult to learn.
@@ -24,7 +24,7 @@ near them, usually appended.
 
 DETAIL:
 
-Notable differences include the additon of a stack, 4
+Notable differences include the addition of a stack, 4
 "registers" (bytes that can be directly accessed from anywhere
 in the program), a larger data table, and the ability for file IO.
 The stack can be managed however the compiler wishes it to be.
@@ -45,7 +45,7 @@ which file the command should refer to.  If a file is set with
 the commands, then any previous file IO streams should be closed
 automatically.
 
-Since the formal additon of comments is possible in the shell
+Since the formal addition of comments is possible in the shell
 style, any characters that do not correspond to a command
 should be ignored and a compiler warning should be generated.
 If strict syntax is being used then the compiler would
@@ -83,7 +83,7 @@ exit should be closed.
 
 --------
 
-MEMEORY LAYOUT:
+MEMORY LAYOUT:
 
 The location for the actual machine code will vary depending on
 the OS and architecture of the target system.
@@ -184,7 +184,7 @@ the byte at the pointer to 0, and exit.  This is proposed to be
 pronounced as "zook" when referring to the line in spoken language.
 
 To "peek" at the top item in the stack, one could simply use the short
-piece of code "Ss".  This is a pop-push that ultiamately leave the
+piece of code "Ss".  This is a pop-push that ultimately leave the
 stack unchanged and overwrites the byte at the pointer with what is
 still the top object.
 
@@ -208,7 +208,7 @@ a loop where it repeatedly pushes the current byte, decreases the value in
 A ("A-a"), pops the old value into the byte and increases the pointer,
 when this loop exits, it finally moves B to the byte at the pointer, and
 restores the old values in the registers. It also maintains the old value
-of A, so it would be possible to move the byte by more than addesses,
+of A, so it would be possible to move the byte by more than addresses,
 however doing this causes it to overwrite the byte in each address it
 stops in.
 
@@ -226,14 +226,14 @@ Explanation:
 
 >                   # Moves to the right, allowing the first loop to exit.
 "Hello World!\n"    # The string, puts a \0 at the end.
-[<]>                # Moves to the begining of the string.
+[<]>                # Moves to the beginning of the string.
 [.>]                # Outputs the string to stdout.
 x00q                # Exits normally.
 
 ~~~~
 
 This takes input from stderr and reverses it to stdout when a '\n'
-is recieved.
+is received.
 
 s                   # Puts an implicit 0 on the stack.
 >"\n"               # Stores a \n in byte 0x0001.
@@ -247,8 +247,8 @@ x00q
 ~~~~
 
 This program is similar the the "cat" program in various linux distros,
-but terminates when it recieves a 0 byte.  The input must be in stdin,
-and will end checking when it recieves a 0 byte.
+but terminates when it receives a 0 byte.  The input must be in stdin,
+and will end checking when it receives a 0 byte.
 
 >[,>]<[<]>%I<[I.]x00q
 
@@ -258,7 +258,7 @@ FUTURE:
 
 Adding the ability to reference different brainf*** and brainfun
 scripts and execute them or bundle them in at runtime is being
-evaluated.  This will probaby include a system of functions, where
+evaluated.  This will probably include a system of functions, where
 the functions are given with user-defined names.
 
 {DOCUMENTATION ENDS HERE}
