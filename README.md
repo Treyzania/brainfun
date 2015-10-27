@@ -1,2 +1,2 @@
 # brainfun
-A fork of brainf***, with example C transcoder in Java.
+A fork of a certain profane language, with example C transcoder in Java.
