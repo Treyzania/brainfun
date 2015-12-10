@@ -220,7 +220,7 @@ CODE EXAMPLES:
 With this upgrade, a simple Hello World program would be simpler, but
 with extra mysterious code around it.
 
-Simple: >"Hello World!\n"[<]>[.]x00q
+Simple: >"Hello World!\n"[<]>[.>]x00q
 
 Explanation:
 
