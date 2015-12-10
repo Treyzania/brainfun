@@ -232,14 +232,14 @@ x00q                # Exits normally.
 
 ~~~~
 
-This takes input from stderr and reverses it to stdout when a '\n'
+This takes input from stdin and reverses it to stdout when a '\n'
 is received.
 
 s                   # Puts an implicit 0 on the stack.
 >"\n"               # Stores a \n in byte 0x0001.
 s                   # Pushes the \n so the program will end in \n.
 <[
-    ,X              # Takes input, XORs it over the \n. (Checks equality)
+    ,sX             # Takes input, XORs it over the \n. (Checks equality)
 ]                   # If the XOR yields 0, it will exit it loop.
 S[.S]               # Pops the stack and outputs it to stdout.
 x00q
