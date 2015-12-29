@@ -1,85 +1,91 @@
 Brainfun Specification 0.2.3 (Clean)
-2015-09-17 Treyzania
+(C) 2015 Treyzania
+
+Created 2015-01-28
+Updated 2015-12-28
+
+<treyzania.com>
+<github.com/treyzania/brainfun>
+
+This is a basic, informal specification of the brainfun programing language.
 
 ========
 
 ABSTRACT:
 
-Brainfun is an improvement on the original brainf*** that
-allows for more functionality while still maintaining the
-cryptic feel of the original language. These revisions are
-not intended to allow the language to become more mainstream
-or easy to use, but to allow more functionality in a way that
-may make the language even more difficult to learn.
+Brainfun is an esoteric language developed entirely for personal enjoyment.  It
+ is an "improvement" on the original brainf*** which allows for more
+ functionality while still maintaining the very cryptic feel of the original
+ language, but with added features.  These revisions are not intended to allow
+ the language to become more mainstream or easy to use, but to allow for more
+ functionality.
 
-Most brainf*** programs should work as expected in brainfun,
-however there is an assumption that there are no comments; or,
-if there are, that they follow the same rules for comments in
-brainfun.
-
-Features that may be removed in a later release have a "(?)"
-near them, usually appended.
+Most brainf*** programs should work as expected in brainfun, however there is
+an assumption that there are no comments; or, if there are, that they follow
+the brainfun style.
 
 --------
 
-DETAIL:
+DIFFERENCES:
 
-Notable differences include the addition of a stack, 4
-"registers" (bytes that can be directly accessed from anywhere
-in the program), a larger data table, and the ability for file IO.
-The stack can be managed however the compiler wishes it to be.
-It does NOT have to be *the* program stack.  The registers are
-not to be confused with actual processor registers.  File IO is
-managed however the compiler and OS see fit.
+Notable differences include the addition of a stack, 4 "registers" (bytes that
+can be directly accessed from anywhere in the program), a larger data table,
+and the ability for file IO.  The stack can be managed however the compiler
+wishes it to be.It does NOT have to be *the* program stack.  The registers are
+not to be confused with actual processor registers.  File IO is managed however
+the compiler and OS see fit, as long as it conforms to the standard outlined
+below.
 
-The data pointers MUST be a 32-bit unsigned integer.  This is
-a requirement based on the sizes of the data tables.
+The data pointers MUST be a 32-bit unsigned integer.  This is a requirement
+based on the sizes of the data tables.
 
-The size of the stack and data table SHOULD be 65566 bytes (0x0 to
-0xFFFF) by default, however this may be overriden by the user, to
-up to ~0xFFFFFFFF, or as restricted by the data pointer.
+The size of the stack and data table SHOULD be 65566 bytes (0x0000 to 0xFFFF)
+by default, however this may be overriden by the user, to up to nearly
+0xFFFFFFFF, or as restricted by the data pointer.
 
-File IO is managed with the three file IDs I, J, and K.  The
-various IO commands are suffixed with the letter to determine
-which file the command should refer to.  If a file is set with
-the commands, then any previous file IO streams should be closed
-automatically.
+File IO is managed with the three file IDs I, J, and K.  The various IO
+commands are suffixed with the letter to determine which file the command
+should refer to.  If a file is set with the commands, then any previous file IO
+streams should be closed automatically.
 
-Since the formal addition of comments is possible in the shell
-style, any characters that do not correspond to a command
-should be ignored and a compiler warning should be generated.
-If strict syntax is being used then the compiler would
-trigger an error and then exit.  This allows for a shebang line,
-so it BF source code can act as a script, in the manner of shell.
+Since the formal addition of comments is possible using the # style, any
+characters that do not correspond to a command should be ignored and a compiler
+warning should be generated.  If strict syntax is being used then the compiler
+would trigger an error and then exit.  This allows for a shebang (#!) line, so
+brainfun source code can act as a script, in the manner of shell.
 
-Any other violation of syntax should trigger a compiler error
-and the compiler should exit.  Whitespace is ALWAYS ignored.
+Any other violation of syntax should trigger a compiler error and the compiler
+should exit.  Whitespace is ALWAYS ignored outside of strings.
 
-Brainfun source code typically uses the *.fun file extension,
-although it is valid to use *.bfn as the extension in a project
-where there are standard brainf*** files, to match the *.bf
-extension.
+Brainfun source code typically uses the *.fun file extension, although it is
+valid to use *.bfn as the extension in a project where there are standard
+brainf*** files, to match the *.bf extension.
+
+There is currently no support for getting program arguments.
 
 --------
 
-INIT:
+PROGRAM INIT:
 
-Program begins by essentialy running the C code
+A program begins by essentialy running the C code
 
+	// Before main()
     unsigned char a, b, c, d; // Registers.
     unsigned char stack[65536] = malloc(65536);
     unsigned char data[65536] = malloc(65536);
     unsigned char* sp = malloc(sizeof(char*));
     unsigned char* dp = malloc(sizeof(char*));
+	
+	// Likely within main()
     sp = stack;
     dp = data;
 
-in main().  Then it proceeds to run its specific code, where
-it will exit with the code of the byte at the data pointer.
-If the program reaches its end and it does not explicitly exit,
-it should exit AS IF there was a normal exit.  The compiler may
-trigger a warning.  Any IO streams that are left open upon
-exit should be closed.
+in main().  Then it proceeds to run the code that was actually written by the
+programmer.  Finally, when either reaching the end of the file or encountering
+`q` (quit) command, it will exit with the code of the byte at the data pointer.
+If the program reaches its end and it does not explicitly exit, it should exit
+AS IF there was a normal exit.  The compiler may trigger a warning.  Any IO
+streams that are left open upon exit should be closed.
 
 --------
 
@@ -98,7 +104,7 @@ the OS and architecture of the target system.
 
 COMMANDS:
 
-$X$     Defines compiler-specific flags.  Should be ignored if
+$X$     Defines compiler flags.  Should be ignored if
 $X=Y$       the compiler does not recognize them.
 
 >       Incr data pointer by 1.
@@ -113,21 +119,19 @@ $X=Y$       the compiler does not recognize them.
 
 ,       Stdin to byte at data pointer.
 
-[...]   Repeats code between [ and ] until the byte at the data
-            pointer is 0, checked each time the looped code
-            begins.  If the byte at pointer is 0, the loop
-            will not run.
+[...]   Repeats code between [ and ] until the byte at the data pointer is 0,
+			checked each time the looped code begins.  If the byte at pointer
+			is 0, the loop will not run.
 
-abcd    Set register to byte at data pointer.
+a,b,c,d Set register to byte at data pointer.
 
-ABCD    Set byte at data pointer to register.
+A,B,C,D Set byte at data pointer to register.
 
-s       Push byte at data pointer onto stack.  If already full, then
-            output a warning to stderr (if compiled with DEBUG).
+s       Push byte at data pointer onto stack.  If already full, then raise an
+			error.
 
-S       Pop from stack to byte at data pointer.  If already empty,
-            return 0 and (if compiled with DEBUG) output a warning
-            to stderr.
+S       Pop from stack to byte at data pointer.  If already empty, then raise
+			an error.
 
 =       Drops the top item from stack without setting byte at pointer.
 
@@ -135,9 +139,11 @@ r       Pushes the registers onto stack.  (Inverse of 'R'.)
 
 R       Pops registers from stack.  (Inverse of 'r'.)
 
-p       Set data pointer to "(((((ptr[0] << 8) + *ptr[1]) << 8) + *ptr[2]) << 8) + *ptr[3]".
+p       Set data pointer to the int defined by the byte at the data pointer and
+			the following three bytes, or something along the lines of:
+			`(((((*dp[0] << 8) + *dp[1]) << 8) + *dp[2]) << 8) + *dp[3]`.
 
-P       Set *ptr[0], *ptr[1], *ptr[2], and *ptr[3] to pointer position.
+P       Set `*dp` to the pointer's position.  This is the inverse of the above.
 
 xXX     Set byte at data pointer to the hex value XX.
 
@@ -148,77 +154,79 @@ _       Set the byte at the data pointer to 0.  (Same as "x00")
 "..."   Creates C-style (implictly ends with \0) string beginning at the data
             pointer.
 
-&       Bitwise AND over the byte at the data pointer and the
-            next, stores output in byte at data pointer. (?)
+&       Bitwise AND over the byte at the data pointer and the next, stores
+			output in byte at data pointer.
 
-|       Bitwise OR over the byte at the data pointer and the
-            next, stores output in byte at data pointer. (?)
+|       Bitwise OR over the byte at the data pointer and the next, stores
+			output in byte at data pointer.
 
-X       Bitwise XOR over the byte at the data pointer and the
-            next, stores output in byte at data pointer. (?)
+X       Bitwise XOR over the byte at the data pointer and the next, stores
+			output in byte at data pointer.
 
-q       Exits the program with an exit code equal to the byte at
-<EOF>       the data pointer.  Typical to have explicit exits.
+q       Exits the program with an exit code equal to the byte at the data
+<EOF>		pointer.  Explicit exits are expected, but not required.
 
-~X      Loads a file with the path given by the C string at the
-            data pointer, where X is the file ID, for reading.
+~X      Loads a file with the path given by the C string at the data pointer,
+			where X is the file ID, for reading.
 
-IJK     Reads from file to data pointer.  Undefined if the last
-            action on file was to open for writing.
+%X      Loads a file with the path given by the C string at the data pointer,
+			where X is the file ID, for writing.
 
-%X      Loads a file with the path given by the C string at the
-            data pointer, where X is the file ID, for writing.
+^X      Loads a file with the path given by the C string at the data pointer,
+			where X is the file ID, appending.
 
-^X      Loads a file with the path given by the C string at the
-            data pointer, where X is the file ID, appending.
+I,J,K   Reads from file to data pointer.  Error thrown if the last action on
+			file was to open for writing.
 
-ijk     Writes to file from data pointer.  Undefined if the last
-            action on X was to open for reading.
+i,j,k   Writes to file from data pointer.  Error thrown if the last action on X
+			was to open for reading.
 
 --------
 
-DERIVATIONS:
+NOTES:
 
-To exit the program with 0, one may use the code "x00q".  This sets
-the byte at the pointer to 0, and exit.  This is proposed to be
-pronounced as "zook" when referring to the line in spoken language.
+To exit the program with 0, one may use the code `x00q`.  This sets the byte at
+the pointer to 0, and exit.  This is proposed to be pronounced as "zook" when
+referring to the line in spoken language. While using `_q` is entirely
+possible, it is rather anticlimactic.
 
-To "peek" at the top item in the stack, one could simply use the short
-piece of code "Ss".  This is a pop-push that ultimately leave the
-stack unchanged and overwrites the byte at the pointer with what is
-still the top object.
+To "peek" at the top item in the stack, one could simply use the short piece of
+code `Ss`.  This is a pop-push that ultimately leave the stack unchanged and
+overwrites the byte at the pointer with what is still the top object.
 
 While proper "if" statements do not exist, one can simulate them with
-"sA[...]S", if A is the register with the tested value.  (Note: Swap
-the ... characters with the code to possibly run.)  To extend this to
-run the code if the register IS 0, then more round-a-bout must be used,
-as in the code "sBs_+bA[_b]B[...]SbS".  This code stores the value of
-the pointer's byte and register B on the stack, sets B to 1, then if A
-is greater than 0, sets register B to 0, then it runs the ... code if B
-is greater than 0, then restores the original value of B and the byte
-at the pointer.  Combining these two, an "if-else" block can be created
-with "sBs_+bA[..._b]B[...]SbS", which can run EITHER of the two
-sections of code.
+`sA[...]S`, if A is the register with the tested value.  (Note: Swap the `...`
+characters with the contents of the pseudo-if statement.)  To extend this to
+run the code if the register IS 0, then more round-a-bout method must be used,
+as in the code `sBs_+bA[_b]B[...]SbS`.  This code stores the value of the
+pointer's byte and register B on the stack, sets B to 1, then if A is greater
+than 0, sets register B to 0, then it runs the ... code if B is greater than 0,
+then restores the original value of B and the byte at the pointer.  Combining
+these two, an "if-else" block can be created with `sBs_+bA[..._b]B[...]SbS`,
+which can run EITHER of the two sections of code.
 
-It is possible to move a byte from one position in the data to another
-very cleanly with a loop.  If the relative position is set in register A,
-then the code would be "rbA[sA-aS>]BR".  This code first stores the
-registers on the stack, then stores the current (copied) byte in B, begins
-a loop where it repeatedly pushes the current byte, decreases the value in
-A ("A-a"), pops the old value into the byte and increases the pointer,
-when this loop exits, it finally moves B to the byte at the pointer, and
-restores the old values in the registers. It also maintains the old value
-of A, so it would be possible to move the byte by more than addresses,
-however doing this causes it to overwrite the byte in each address it
-stops in.
+It is possible to move a byte from one position in the data to another very
+cleanly with a loop.  If the relative position is set in register A, then the
+code would be `rbA[sA-aS>]BR` to move it to the right.  This code first stores
+the registers on the stack, then stores the current (copied) byte in B, begins
+a loop where it repeatedly pushes the current byte, decreases the value in A
+(with `A-a`), pops the old value into the byte and increases the pointer, when
+this loop exits, it finally moves B to the byte at the pointer, and restores
+the old values in the registers. It also maintains the old value of A, so it
+would be possible to move the byte by more than 255 addresses, however doing
+this causes it to overwrite the value in each address it stops in.  Therefore,
+this code is largely unsuitable for large moves.
 
+The name "brainfun" should not be capitalzed anywhere, except when a normal
+word would be capitalized, as its namesake was.  The language is not fully
+developed, but in this version it is a functional, well-rounded language.
 
 --------
 
 CODE EXAMPLES:
 
-With this upgrade, a simple Hello World program would be simpler, but
-with extra mysterious code around it.
+In constrast to brainf***, a simple Hello World program would be simpler, but
+with extra, "mysterious" code around it.
 
 Simple: >"Hello World!\n"[<]>[.>]x00q
 
@@ -235,30 +243,33 @@ x00q                # Exits normally.
 This takes input from stdin and reverses it to stdout when a '\n'
 is received.
 
-s                   # Puts an implicit 0 on the stack.
+s                   # Puts an implicit 0 on the stack, to terminate the output loop later on.
 >"\n"               # Stores a \n in byte 0x0001.
-s                   # Pushes the \n so the program will end in \n.
-<[
-    ,sX             # Takes input, XORs it over the \n. (Checks equality)
+s<                  # Pushes the \n to the stack so the program will definitely end in \n.
+[
+    ,sX             # Takes input, pushes it onto the stack, and XORs it over the \n. (Checks equality)
 ]                   # If the XOR yields 0, it will exit it loop.
-S[.S]               # Pops the stack and outputs it to stdout.
+_+[S.]              # Pops the stack and outputs it to stdout.
 x00q
 
 ~~~~
 
-This program is similar the the "cat" program in various linux distros,
-but terminates when it receives a 0 byte.  The input must be in stdin,
-and will end checking when it receives a 0 byte.
+This program is similar the the "cat" program in various linux distros, but
+terminates when it receives a 0 byte from the file.  The input must be in
+stdin, and will end checking when it receives a 0 byte from stdin.  It also can
+only output a single file, as opposed to the many that the original can
+concatenate, as the name suggests.
 
->[,>]<[<]>%I<[I.]x00q
+
+>[,>]<[<]>~I<[I.]x00q
 
 --------
 
 FUTURE:
 
-Adding the ability to reference different brainf*** and brainfun
-scripts and execute them or bundle them in at runtime is being
-evaluated.  This will probably include a system of functions, where
-the functions are given with user-defined names.
+Adding the ability to reference different brainf*** and brainfun scripts and
+bundle them in or execute them at runtime is a possible future feature.  This
+will probably include a system of functions, where the functions are given with
+user-defined names.
 
 {DOCUMENTATION ENDS HERE}
